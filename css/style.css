@@ -1,3 +1,25 @@
+/* ===== Promo Banner ===== */
+.promo-banner {
+  display: block;
+  text-decoration: none;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 16px;
+  transition: background 0.3s;
+}
+.promo-banner:hover { background: linear-gradient(135deg, #1a1a2e 0%, #1a2a4e 50%, #1a4a70 100%); }
+.promo-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.promo-icon { font-size: 24px; flex-shrink: 0; }
+.promo-text { flex: 1; color: #e0e0e0; font-size: 13px; line-height: 1.3; }
+.promo-text strong { color: #fff; font-size: 14px; display: block; }
+.promo-arrow { color: #64b5f6; font-size: 18px; font-weight: bold; flex-shrink: 0; }
+
 /* style.css — Dark theme, mobile-first */
 :root {
   --bg: #0d0d0d;
