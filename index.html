@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>📸 Фото на документы</title>
+  <meta name="description" content="Создайте идеальное фото на документы — паспорт, визу, права. Бесплатно, без загрузки на сервер.">
+  <meta name="theme-color" content="#0d0d0d">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+
+<!-- ===== SCREEN: PRESETS ===== -->
+<div class="screen active" id="screen-presets">
+  <div class="header">
+    <h1>📸 Фото на документы</h1>
+    <span class="subtitle">Выберите формат</span>
+  </div>
+  <div id="presets-grid"></div>
+</div>
+
+<!-- ===== SCREEN: CAMERA ===== -->
+<div class="screen" id="screen-camera">
+  <div class="header">
+    <button class="btn-back" onclick="app.goBack()">←</button>
+    <h1 id="camera-preset-name">Камера</h1>
+  </div>
+  <div class="camera-container">
+    <video id="camera-video" playsinline autoplay muted></video>
+    <div class="camera-overlay">
+      <div class="camera-guide"></div>
+    </div>
+    <div id="timer-display" class="hidden"></div>
+  </div>
+  <div class="camera-controls">
+    <button class="btn-icon" id="btn-switch-cam" title="Сменить камеру">🔄</button>
+    <button class="btn-icon" id="btn-mirror" title="Зеркало">↔️</button>
+    <div>
+      <button class="btn-icon" id="btn-timer" title="Таймер">⏱️</button>
+      <div class="timer-label"><span id="timer-value">Выкл</span></div>
+    </div>
+    <button id="btn-capture" title="Снять"></button>
+    <button class="btn-icon" id="btn-upload" title="Загрузить фото">📁</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: EDITOR ===== -->
+<div class="screen" id="screen-editor">
+  <div class="header">
+    <button class="btn-back" onclick="app.goBack()">←</button>
+    <h1>Редактор</h1>
+  </div>
+  <div class="editor-container">
+    <div class="editor-canvas-wrap">
+      <canvas id="editor-canvas"></canvas>
+    </div>
+    <div class="editor-toolbar">
+      <!-- Actions -->
+      <div class="toolbar-row">
+        <button class="btn-tool" id="btn-auto-crop">🎯 Автокроп</button>
+        <button class="btn-tool" id="btn-remove-bg">✨ Убрать фон</button>
+      </div>
+
+      <!-- Background colors -->
+      <div class="toolbar-row">
+        <span style="font-size:12px;color:var(--text2)">Фон:</span>
+        <button class="bg-color-btn" data-color="#ffffff" style="background:#fff" title="Белый"></button>
+        <button class="bg-color-btn" data-color="#e0e0e0" style="background:#e0e0e0" title="Серый"></button>
+        <button class="bg-color-btn" data-color="#b3d9ff" style="background:#b3d9ff" title="Голубой"></button>
+        <button class="bg-color-btn" data-color="#ff6666" style="background:#ff6666" title="Красный"></button>
+      </div>
+
+      <!-- Brightness -->
+      <div class="toolbar-row">
+        <div class="slider-group">
+          <label>☀️ Яркость</label>
+          <input type="range" id="slider-brightness" min="-50" max="50" value="0">
+          <span class="slider-value" id="brightness-value">0</span>
+        </div>
+      </div>
+
+      <!-- Contrast -->
+      <div class="toolbar-row">
+        <div class="slider-group">
+          <label>◑ Контраст</label>
+          <input type="range" id="slider-contrast" min="-50" max="50" value="0">
+          <span class="slider-value" id="contrast-value">0</span>
+        </div>
+      </div>
+
+      <!-- Saturation -->
+      <div class="toolbar-row">
+        <div class="slider-group">
+          <label>🎨 Насыщенность</label>
+          <input type="range" id="slider-saturation" min="-50" max="50" value="0">
+          <span class="slider-value" id="saturation-value">0</span>
+        </div>
+      </div>
+
+      <!-- Rotation -->
+      <div class="toolbar-row">
+        <div class="slider-group">
+          <label>🔃 Поворот</label>
+          <input type="range" id="slider-rotation" min="-45" max="45" value="0">
+          <span class="slider-value" id="rotation-value">0°</span>
+        </div>
+      </div>
+
+      <!-- Skin tone -->
+      <div class="toolbar-row">
+        <span style="font-size:12px;color:var(--text2)">Тон кожи:</span>
+        <button class="skin-tone-btn" data-tone="warm" style="background:#f4c7a0" title="Тёплый"></button>
+        <button class="skin-tone-btn active" data-tone="neutral" style="background:#e8c4a0" title="Нейтральный"></button>
+        <button class="skin-tone-btn" data-tone="cool" style="background:#d4b8c0" title="Холодный"></button>
+      </div>
+
+      <!-- Navigation -->
+      <div class="toolbar-row" style="margin-top:12px">
+        <button class="btn-tool" id="btn-validate">✅ Проверить</button>
+        <button class="btn-tool" id="btn-to-print">🖨️ Печать</button>
+        <button class="btn-tool primary" id="btn-to-export">💾 Экспорт</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: VALIDATION ===== -->
+<div class="screen" id="screen-validation">
+  <div class="header">
+    <button class="btn-back" onclick="app.goBack()">←</button>
+    <h1>✅ Проверка требований</h1>
+  </div>
+  <div class="validation-list" id="validation-list"></div>
+  <div style="padding:16px;display:flex;gap:10px">
+    <button class="btn-tool" onclick="app.showScreen('editor')" style="flex:1">← Назад к редактору</button>
+    <button class="btn-tool primary" onclick="app.showExport()" style="flex:1">Экспорт →</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: PRINT ===== -->
+<div class="screen" id="screen-print">
+  <div class="header">
+    <button class="btn-back" onclick="app.showScreen('editor')">←</button>
+    <h1>🖨️ Раскладка на печать</h1>
+  </div>
+  <div class="print-layouts" id="print-layouts"></div>
+  <div id="print-preview"></div>
+  <div class="print-options">
+    <div class="toolbar-row">
+      <button class="btn-tool active" id="btn-cut-lines">✂️ Линии реза</button>
+      <button class="btn-tool primary" id="btn-export-print">💾 Скачать раскладку</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCREEN: EXPORT ===== -->
+<div class="screen" id="screen-export">
+  <div class="header">
+    <button class="btn-back" onclick="app.showScreen('editor')">←</button>
+    <h1>💾 Экспорт</h1>
+  </div>
+  <div class="export-container">
+    <div id="export-preview"></div>
+    <div id="export-info"></div>
+    <div class="export-buttons">
+      <button class="btn-export jpg" id="btn-export-jpg">📷 Скачать JPG</button>
+      <button class="btn-export png" id="btn-export-png">🖼️ Скачать PNG</button>
+      <button class="btn-export pdf" id="btn-export-pdf">📄 Печать PDF</button>
+      <button class="btn-export copy" id="btn-copy">📋 Копировать</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CUSTOM PRESET DIALOG ===== -->
+<div class="dialog-overlay hidden" id="custom-preset-dialog">
+  <div class="dialog">
+    <h2>⚙️ Произвольный формат</h2>
+    <input type="number" id="custom-w" placeholder="Ширина (мм)" value="35">
+    <input type="number" id="custom-h" placeholder="Высота (мм)" value="45">
+    <label style="font-size:13px;color:var(--text2);display:block;margin-bottom:6px">Цвет фона:</label>
+    <input type="color" id="custom-bg" value="#ffffff" style="width:100%;height:40px;border:none;cursor:pointer">
+    <div class="dialog-buttons">
+      <button class="btn-tool" id="btn-cancel-custom">Отмена</button>
+      <button class="btn-tool primary" id="btn-apply-custom">Применить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Scripts -->
+<script src="js/presets.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/background.js"></script>
+<script src="js/face.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/print.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
+
+</body>
+</html>

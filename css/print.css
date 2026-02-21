@@ -1,0 +1,11 @@
+/* print.css — Styles for @media print */
+@media print {
+  body { background: #fff !important; }
+  .header, .camera-controls, .editor-toolbar, .print-options,
+  .btn-back, .btn-tool, .btn-export, #toast { display: none !important; }
+  .screen { display: block !important; height: auto !important; overflow: visible !important; }
+  #print-preview canvas {
+    width: 100% !important; max-width: 100% !important; border: none !important;
+    page-break-inside: avoid;
+  }
+}
